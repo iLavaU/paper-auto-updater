@@ -25,7 +25,7 @@ services:
     container_name: autoimporter
     depends_on:
       - grobid
-      - ilibrarian
+      - i-librarian
     env_file:
       - .env
     volumes:
