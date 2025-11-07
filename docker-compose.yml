@@ -13,7 +13,7 @@ services:
     image: cgrima/i-librarian:latest
     container_name: i-librarian
     ports:
-      - "38474:80"     # Web UI → http://localhost:8474
+      - "38475:80"     # Web UI → http://localhost:8474
     volumes:
       - ./i-librarian-data:/app/data
     restart: unless-stopped
