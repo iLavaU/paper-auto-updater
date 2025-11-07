@@ -59,8 +59,14 @@ def process_pdf(pdf_path: Path):
 def main():
     log("Starting auto-importer...")
     while True:
+        pdf_generator = WATCH_FOLDER.glob("*.pdf")
+        pdfs = list(WATCH_FOLDER.glob("*.pdf"))
+        if not pdfs or len(pdfs) == 0:
+            log(f"No new pdfs in {str(WATCH_FOLDER)}. Sleeping {str(INTERVAL_MINUTES * 60)}")
+            time.sleep(INTERVAL_MINUTES * 60)
+            continue
         try:
-            for pdf in WATCH_FOLDER.glob("*.pdf"):
+            for pdf in pdf_generator:
                 process_pdf(pdf)
         except Exception as e:
             log("Unexpected error in main loop:")
