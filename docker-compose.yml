@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   grobid:
     image: lfoppiano/grobid:latest-crf
