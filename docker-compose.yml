@@ -12,6 +12,7 @@ services:
   i-librarian:
     image: cgrima/i-librarian:latest
     container_name: i-librarian
+    user: "568:568"        # 👈 run as UID/GID 568
     ports:
       - "38475:80"     # Web UI → http://localhost:8474
     volumes:
