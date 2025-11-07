@@ -29,6 +29,5 @@ services:
     env_file:
       - .env
     volumes:
-      - ./new_papers:/app/new_papers
-      - ./processed:/app/processed
+      - /mnt/poo1_1/bibliografia/papers:/papers
     restart: unless-stopped
