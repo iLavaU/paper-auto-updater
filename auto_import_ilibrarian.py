@@ -10,7 +10,6 @@ from grobid_client.grobid_client import GrobidClient
 # --- Config from .env ---
 WATCH_FOLDER = Path(os.getenv("WATCH_FOLDER", "/papers/new"))
 PROCESSED_FOLDER = Path(os.getenv("PROCESSED_FOLDER", "/papers/processed"))
-GROBID_URL = os.getenv("GROBID_URL", "http://grobid:8070/api/processHeaderDocument")
 ILIBRARIAN_UPLOAD_URL = os.getenv("ILIBRARIAN_UPLOAD_URL", "")
 INTERVAL_MINUTES = int(os.getenv("INTERVAL_MINUTES", "10"))
 ILIBRARIAN_USER = os.getenv("ILIBRARIAN_USER")
@@ -34,13 +33,13 @@ def process_pdf(pdf_path: Path):
         client.process(
             service="processFulltextDocument",
             input_path=str(WATCH_FOLDER),
-            output_path=str(PROCESSED_FOLDER),
+            output=str(PROCESSED_FOLDER),
             n=2,
             generateIDs=True,
             consolidate_header=True,
             consolidate_citations=True,
-            teiCoordinates=True,
-            segmentSentences=True
+            tei_coordinates=True,
+            segment_sentences=True
         )
     except Exception as e:
         log(f"GROBID request failed for {pdf_path.name}: {e}")
