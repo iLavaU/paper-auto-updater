@@ -10,6 +10,7 @@
         rm -rf /var/lib/apt/lists/*
     
     COPY requirements.txt ./
+    COPY grobid_client_config.json ./
     RUN pip install --no-cache-dir -r requirements.txt
     
     # ---- Copy script ----

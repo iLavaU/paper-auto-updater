@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from datetime import datetime
 import traceback
+from grobid_client.grobid_client import GrobidClient
 
 # --- Config from .env ---
 WATCH_FOLDER = Path(os.getenv("WATCH_FOLDER", "/papers/new"))
@@ -19,6 +20,8 @@ ILIBRARIAN_PASS = os.getenv("ILIBRARIAN_PASS")
 for folder in [WATCH_FOLDER, PROCESSED_FOLDER]:
     folder.mkdir(parents=True, exist_ok=True)
 
+client = GrobidClient("grobid_client_config.json")
+
 def log(msg):
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{ts}] {msg}", flush=True)
@@ -28,33 +31,41 @@ def process_pdf(pdf_path: Path):
 
     # Send to GROBID
     try:
-        with open(pdf_path, "rb") as f:
-            resp = requests.post(GROBID_URL, files={"input": f}, timeout=30)
-        resp.raise_for_status()
+        client.process(
+            service="processFulltextDocument",
+            input_path=str(WATCH_FOLDER),
+            output_path=str(PROCESSED_FOLDER),
+            n=2,
+            generateIDs=True,
+            consolidate_header=True,
+            consolidate_citations=True,
+            teiCoordinates=True,
+            segmentSentences=True
+        )
     except Exception as e:
         log(f"GROBID request failed for {pdf_path.name}: {e}")
         return
 
-    # Parse XML
-    try:
-        root = ET.fromstring(resp.text)
-        title_el = root.find(".//titleStmt/title")
-        title = title_el.text.strip() if title_el is not None and title_el.text else pdf_path.stem
-    except Exception as e:
-        log(f"XML parse error for {pdf_path.name}: {e}")
-        title = pdf_path.stem
+    # # Parse XML
+    # try:
+    #     root = ET.fromstring(resp.text)
+    #     title_el = root.find(".//titleStmt/title")
+    #     title = title_el.text.strip() if title_el is not None and title_el.text else pdf_path.stem
+    # except Exception as e:
+    #     log(f"XML parse error for {pdf_path.name}: {e}")
+    #     title = pdf_path.stem
 
-    # Upload to I Librarian
-    try:
-        with open(pdf_path, "rb") as f:
-            files = {"file": f}
-            data = {"user": ILIBRARIAN_USER, "password": ILIBRARIAN_PASS, "title": title}
-            resp = requests.post(ILIBRARIAN_UPLOAD_URL, files=files, data=data, timeout=30)
-        resp.raise_for_status()
-        log(f"Uploaded successfully → {pdf_path.name}")
-        pdf_path.rename(PROCESSED_FOLDER / pdf_path.name)
-    except Exception as e:
-        log(f"Upload failed for {pdf_path.name}: {e}")
+    # # Upload to I Librarian
+    # try:
+    #     with open(pdf_path, "rb") as f:
+    #         files = {"file": f}
+    #         data = {"user": ILIBRARIAN_USER, "password": ILIBRARIAN_PASS, "title": title}
+    #         resp = requests.post(ILIBRARIAN_UPLOAD_URL, files=files, data=data, timeout=30)
+    #     resp.raise_for_status()
+    #     log(f"Uploaded successfully → {pdf_path.name}")
+    #     pdf_path.rename(PROCESSED_FOLDER / pdf_path.name)
+    # except Exception as e:
+    #     log(f"Upload failed for {pdf_path.name}: {e}")
 
 def main():
     log("Starting auto-importer...")

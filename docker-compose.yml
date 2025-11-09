@@ -2,9 +2,9 @@ services:
   grobid:
     image: lfoppiano/grobid:latest-crf
     container_name: grobid
-    #ports:
-    #  - "8070:8070"   # REST API
-    #  - "8071:8071"   # Admin API (optional)
+    ports:
+      - "8070:8070"   # REST API
+      - "8071:8071"   # Admin API (optional)
     environment:
       - GROBID_HOME=/opt/grobid
     restart: unless-stopped

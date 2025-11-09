@@ -1,2 +1,3 @@
 requests
 lxml
+grobid-client-python
