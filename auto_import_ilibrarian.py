@@ -20,7 +20,7 @@ ILIBRARIAN_PASS = os.getenv("ILIBRARIAN_PASS")
 for folder in [WATCH_FOLDER, PROCESSED_FOLDER]:
     folder.mkdir(parents=True, exist_ok=True)
 
-client = GrobidClient("grobid_client_config.json")
+client = GrobidClient(config_path="./grobid_client_config.json")
 
 def log(msg):
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
